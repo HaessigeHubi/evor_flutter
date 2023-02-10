@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "247832167086",
+    "project_id": "evor-diplom",
+    "storage_bucket": "evor-diplom.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:247832167086:android:67f9b9bc62abe9c645633f",
+        "android_client_info": {
+          "package_name": "com.evor.evor_flutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "247832167086-ehnjfkc1r9rfn16jk1foeo2tkc613gm0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD-pJimOPMaMX_FTTKT34sX2YvpqqBZRx8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "247832167086-ehnjfkc1r9rfn16jk1foeo2tkc613gm0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
