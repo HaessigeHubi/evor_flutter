@@ -34,6 +34,7 @@ class _CreateEventState extends State<CreateEvent> {
             Text("Partisipant amount:"),
             Text("Location Info:"),
             Text("Optional Questions:"),
+            Text("Optional Questions:"),
             SizedBox(height: 20),
 
             Row(
