@@ -50,3 +50,19 @@ Future<List<Event>> fetchEvents() async {
     throw Exception('failed');
   }
 }
+
+Future<http.Response> createEvent(Event event){
+  return http.post(
+    Uri.parse('http://10.0.2.2:8080/events'),
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, String>{
+      'eventname': event.eventname,
+      'description': event.description,
+      'lat': event.lat.toString(),
+      'lng': event.lng.toString(),
+      'address': event.address,
+    })
+  );
+}
