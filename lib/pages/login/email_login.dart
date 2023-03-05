@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import '../../domain/repository/models/users.dart' as UserEvent;
 
 import 'signup.dart';
 import '../../../home.dart';
@@ -19,7 +20,8 @@ class _EmailLogInState extends State<EmailLogIn> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text("Login")),
+        appBar: AppBar(title: Text("Login"),
+        backgroundColor: Colors.orange,),
         body: Form(
             key: _formKey,
             child: SingleChildScrollView(
@@ -72,13 +74,16 @@ class _EmailLogInState extends State<EmailLogIn> {
                     child: isLoading
                         ? CircularProgressIndicator()
                         : ElevatedButton(
-                      style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.lightBlue)),
+                      style: ButtonStyle(backgroundColor: MaterialStateProperty.all<Color>(Colors.orange)),
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           setState(() {
                             isLoading = true;
                           });
                           logInToFb();
+                          setState(() {
+                            isLoading = false;
+                          });
                         }
                       },
                       child: Text('Submit'),
@@ -91,20 +96,22 @@ class _EmailLogInState extends State<EmailLogIn> {
     FirebaseAuth.instance
         .signInWithEmailAndPassword(
         email: emailController.text, password: passwordController.text)
-        .then((result) {
+        .then((result) async {
       isLoading = false;
+      print(result);
+      UserEvent.User loginUser = await UserEvent.fetchUserbyMail(emailController.text);
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => Home(uid: result.user!.uid)),
+        MaterialPageRoute(builder: (context) => Home(user: loginUser)),
       );
     }).catchError((err) {
       print(err.message);
+      isLoading = false;
       showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(
-              title: Text("Error"),
-              content: Text(err.message),
+              title: Text("E-Mail or Password is wrong"),
               actions: [
                 ElevatedButton(
                   child: Text("Ok"),

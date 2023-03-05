@@ -1,82 +1,101 @@
+import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
-
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'pages/login/signup.dart';
 import 'pages/event/search/eventlist.dart';
 import 'pages/event/create/createEvent.dart';
 import 'pages/event/owner/userEventList.dart';
 import 'pages/Maps/googlemaps.dart';
+import 'domain/repository/models/users.dart' as User;
+
+String? userEmail;
 
 class Home extends StatefulWidget {
-  Home({this.uid});
-  final String? uid;
+  Home({required this.user});
+  final User.User user;
 
   @override
   State<Home> createState() => _HomeState();
 }
 
 class _HomeState extends State<Home> {
-  final String title = "EVOR";
   late GoogleMapController controller;
-  int _selectedIndex = 1;
-  Widget GoogleMaps = new GoogleMapsWidget();
 
-
+  /*
+  Navigation Logic, when the user presses something in the nav bar. Always sends Widget.User to the next Widget
+  */
   void _onItemTapped(int index) {
     setState(() async {
-
-      switch (index){
-        case 0: {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const EventList()),
-          );
-
-        } break;
-        case 1: {
-          final result = await Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => CreateEvent()),
-          );
-          updateMap = true;
-        } break;
-        case 2: {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const UserEventList()),
-          );
-        } break;
+      switch (index) {
+        case 1:
+          {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => EventList(user: widget.user)),
+            );
+          }
+          break;
+        case 0:
+          {
+            final result = await Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => CreateEvent(user: widget.user)),
+            );
+            updateMap = true;
+          }
+          break;
+        case 3:
+          {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => UserEventList(user: widget.user)),
+            );
+          }
+          break;
+        case 4:
+          {
+            Navigator.of(context).push(_createRoute());
+          }
+          break;
       }
-
-
     });
+  }
+
+  String title() {
+    return 'EVOR ' + widget.user.firstname;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
+        //Top Bar with Logo and Logout Button
         appBar: AppBar(
-          title: Text(title,style: TextStyle(color: Colors.black)),
-          backgroundColor: Colors.deepPurple,
-          actions: <Widget>[
-            IconButton(
-              icon: Icon(
-                Icons.filter_alt_rounded,
-                color: Colors.black,
-              ),
-              onPressed: () {
-                Navigator.of(context).push(_createRoute());
-              },
+          automaticallyImplyLeading: false,
+          centerTitle: true,
+          title: const Image(image: AssetImage('assets/Evor_Logo.png'), height: 300,),
+          toolbarHeight: 100,
+            elevation: 14,
+            //Rounded Corners
+            shape: const RoundedRectangleBorder(
+                borderRadius:  BorderRadius.only(
+                    bottomRight: Radius.circular(30),
+                    bottomLeft: Radius.circular(30))
             ),
+          backgroundColor: Colors.orange,
+          actions: <Widget>[
             IconButton(
               icon: Icon(
                 Icons.exit_to_app,
                 color: Colors.black,
               ),
               onPressed: () {
+                //Logs current User out of the app
                 FirebaseAuth auth = FirebaseAuth.instance;
                 auth.signOut().then((res) {
                   Navigator.pushAndRemoveUntil(
@@ -86,40 +105,33 @@ class _HomeState extends State<Home> {
                 });
               },
             ),
-
           ],
         ),
-        bottomNavigationBar: BottomNavigationBar(
-          iconSize: 30,
-          backgroundColor: Colors.deepPurple,
-          selectedIconTheme: IconThemeData(size: 80, color: Colors.deepPurpleAccent),
-          showUnselectedLabels: false,
-          showSelectedLabels: false,
-          items: const <BottomNavigationBarItem>[
-            BottomNavigationBarItem(
-              icon: Icon(Icons.search),
-              label: 'Search',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.add_outlined),
-              label: 'Create',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.event_available),
-              label: 'My',
-            ),
+        //Navigation Bar with the FancyBottom Plugin. MAX 5 Tabs allowed
+        bottomNavigationBar: FancyBottomNavigation(
+          inactiveIconColor: Colors.orange,
+          circleColor: Colors.orange,
+          initialSelection: 2,
+          tabs: [
+            TabData(iconData: Icons.add, title: "Add"),
+            TabData(iconData: Icons.list, title: "List"),
+            TabData(iconData: Icons.map, title: "Map"),
+            TabData(iconData: Icons.calendar_month, title: "Owner"),
+            TabData(iconData: Icons.filter_alt, title: "Filter")
           ],
-          currentIndex: _selectedIndex, //New
-          onTap: _onItemTapped,
+          onTabChangedListener: (position) {
+            setState(() {
+              _onItemTapped(position);
+            });
+          },
         ),
-        body: GoogleMaps);
+        body: GoogleMapsWidget(user: widget.user));
   }
 }
-
-
+//Just here to create an animation between button press and widget load
 Route _createRoute() {
   return PageRouteBuilder(
-    pageBuilder: (context, animation, secondaryAnimation) => Page2(),
+    pageBuilder: (context, animation, secondaryAnimation) => Filter_Event(),
     transitionsBuilder: (context, animation, secondaryAnimation, child) {
       const begin = Offset(0.5, -1.0);
       const end = Offset(0.0, 0.0);
@@ -134,19 +146,20 @@ Route _createRoute() {
     },
   );
 }
+//Filter App
+class Filter_Event extends StatelessWidget {
+  final GlobalKey<FormBuilderState> _fbFilterKey =
+      GlobalKey<FormBuilderState>();
 
-class Page2 extends StatelessWidget {
-  final GlobalKey<FormBuilderState> _fbFilterKey = GlobalKey<FormBuilderState>();
-
-
-  Page2({super.key});
+  Filter_Event({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Filter the Map',style: TextStyle(color: Colors.black)),
-        backgroundColor: Colors.deepPurple,),
+        title: Text('Filter the Map', style: TextStyle(color: Colors.black)),
+        backgroundColor: Colors.orange,
+      ),
       body: Container(
         child: SingleChildScrollView(
           child: Column(
@@ -207,8 +220,7 @@ class Page2 extends StatelessWidget {
                     ),
                     FormBuilderTextField(
                       name: 'Location',
-                      decoration: InputDecoration(
-                          labelText: "Location"),
+                      decoration: InputDecoration(labelText: "Location"),
                     ),
                     SizedBox(height: 20),
                     Row(
@@ -216,14 +228,25 @@ class Page2 extends StatelessWidget {
                       children: <Widget>[
                         ElevatedButton(
                             onPressed: () {
+                              //Adds Filter Object and sends that to the Google Maps Widget. On load the Events get filtert
                               _fbFilterKey.currentState?.save();
                               if (_fbFilterKey.currentState!.validate()) {
-                                print(_fbFilterKey.currentState!.value['Tags'] );
-                                mapfilter.eventname = _fbFilterKey.currentState!.value['event_name'] ?? "";
-                                mapfilter.datefrom = _fbFilterKey.currentState!.value['date_from'] ?? "";
-                                mapfilter.dateto = _fbFilterKey.currentState!.value['date_to'] ?? "";
-                                mapfilter.tag = _fbFilterKey.currentState!.value['Tags'] ?? "999";
-                                mapfilter.Location = _fbFilterKey.currentState!.value['Location'] ?? "";
+                                print(_fbFilterKey.currentState!.value['Tags']);
+                                mapfilter.eventname = _fbFilterKey
+                                        .currentState!.value['event_name'] ??
+                                    "";
+                                mapfilter.datefrom = _fbFilterKey
+                                        .currentState!.value['date_from'] ??
+                                    "";
+                                mapfilter.dateto = _fbFilterKey
+                                        .currentState!.value['date_to'] ??
+                                    "";
+                                mapfilter.tag =
+                                    _fbFilterKey.currentState!.value['Tags'] ??
+                                        "999";
+                                mapfilter.Location = _fbFilterKey
+                                        .currentState!.value['Location'] ??
+                                    "";
                                 updateMap = true;
                                 Navigator.pop(context, mapfilter);
                               }
@@ -241,10 +264,3 @@ class Page2 extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
-
-

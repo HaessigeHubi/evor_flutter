@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
-
+import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import '../../../domain/repository/models/events.dart' as EventsMap;
+import '../../../domain/repository/models/users.dart' as EventUser;
 
 class DetailEvent extends StatelessWidget{
   final EventsMap.Event event;
+  final EventUser.User user;
   const DetailEvent ({
     Key? key,
     required this.event,
+    required this.user
   }) : super (key: key);
   @override
   Widget build (BuildContext context) => Scaffold(
@@ -31,6 +36,8 @@ class DetailEvent extends StatelessWidget{
             Navigator.pop(context);
           }, child: Text('Go Back'),),
           ElevatedButton(onPressed: (){
+            print(event.id);
+            EventsMap.joinEvent(event.id.toString(), user.id);
             Navigator.pop(context);
           }, child: Text('Join Event'),)
         ],
@@ -39,3 +46,4 @@ class DetailEvent extends StatelessWidget{
     ),
   );
 }
+

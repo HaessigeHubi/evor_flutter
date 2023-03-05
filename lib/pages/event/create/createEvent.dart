@@ -4,24 +4,27 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:form_builder_image_picker/form_builder_image_picker.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:intl/intl.dart';
 import '../../login/signup.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import '../../../domain/repository/models/events.dart' as EventsMap;
+import '../../../domain/repository/models/users.dart' as EventUser;
 import 'selectLocation.dart';
 
 
 import 'package:image_picker/image_picker.dart';
 
 class CreateEvent extends StatefulWidget {
-  CreateEvent({super.key});
+  CreateEvent({super.key, required this.user});
+  final EventUser.User user;
+
+
   @override
   State<CreateEvent> createState() => _CreateEventState();
 }
 
 class _CreateEventState extends State<CreateEvent> {
   final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
-  bool _visibleAgeSet = false;
-  List<String> _textFieldValues = [];
   late List<dynamic> imageList;
   XFile? imageFile;
   ResponseLocation responseLocation = new ResponseLocation(1, 1, new Placemark(street: 'No Location selected'));
@@ -31,6 +34,7 @@ class _CreateEventState extends State<CreateEvent> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.orange,
         title: Text("Create new Event"),
         actions: <Widget>[
           IconButton(
@@ -53,10 +57,13 @@ class _CreateEventState extends State<CreateEvent> {
       body: Container(
         child: SingleChildScrollView(
           child: Column(
+
             children: <Widget>[
               FormBuilder(
                 key: _fbKey,
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
                     if (imageFile != null) Image.file(File(imageFile!.path)),
                     SizedBox(height: 10),
@@ -96,7 +103,9 @@ class _CreateEventState extends State<CreateEvent> {
                     ),
                     FormBuilderDateTimePicker(
                       name: "date_from",
-                      inputType: InputType.date,
+                      inputType: InputType.both,
+                      format: DateFormat('dd.MM.yyy HH:mm'),
+
                       decoration: InputDecoration(labelText: "Date from"),
                       onChanged: (value) {
                         print(value);
@@ -104,13 +113,13 @@ class _CreateEventState extends State<CreateEvent> {
                     ),
                     FormBuilderDateTimePicker(
                       name: "date_to",
-                      inputType: InputType.date,
+                      inputType: InputType.both,
+                      format: DateFormat('dd.MM.yyy HH:mm'),
                       decoration: InputDecoration(labelText: "Date to"),
                       onChanged: (value) {
                         print(value);
                       },
                     ),
-                    SizedBox(height: 10),
                     FormBuilderTextField(
                       name: "description",
                       decoration: InputDecoration(labelText: "Description"),
@@ -122,6 +131,7 @@ class _CreateEventState extends State<CreateEvent> {
                         return null;
                       },
                     ),
+                    SizedBox(height: 30),
                     Text("What kind of Event"),
                     FormBuilderChoiceChip(
                       name: 'Tags',
@@ -151,24 +161,13 @@ class _CreateEventState extends State<CreateEvent> {
                         return null;
                       },
                     ),
-                    TextField(
-                      decoration: InputDecoration(
-                          labelText: "Partition Age (optional)"),
-                      keyboardType: TextInputType.number,
-                    ),
-                    TextField(
-                      decoration: InputDecoration(
-                          labelText: "Maxiumum Partitions (optional)"),
-                      keyboardType: TextInputType.number,
-                    ),
-                    Text("Optional Questions:"),
-                    Text("Optional Questions:"),
                     SizedBox(height: 20),
                     ElevatedButton(
+                        style: ButtonStyle( backgroundColor: MaterialStateProperty.all<Color>(Colors.orange)),
                         onPressed: () async {
                           final result = await Navigator.push(
-                              context,
-                          MaterialPageRoute(builder: (context) => SelectLocation()),
+                            context,
+                            MaterialPageRoute(builder: (context) => SelectLocation()),
                           );
                           print(result);
                           setState(() {
@@ -180,30 +179,57 @@ class _CreateEventState extends State<CreateEvent> {
                             address = '$street \n$postalCode $administrativeArea\n$country';
                           });
                         }, child:
-                         Text('Select Location')),
+                    Text('Select Event Location')),
                     if(responseLocation.selectedLocation.street != 'No Location selected') Text(address,style: TextStyle(fontSize:19,fontWeight: FontWeight.bold),),
+
+                    SizedBox(height: 10),
+                    TextField(
+                      decoration: InputDecoration(
+                          labelText: "Partition Age (optional)"),
+                      keyboardType: TextInputType.number,
+                    ),
+                    TextField(
+                      decoration: InputDecoration(
+                          labelText: "Maxiumum Partitions (optional)"),
+                      keyboardType: TextInputType.number,
+                    ),
+
+
+                    SizedBox(height: 40),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.end,
+
                       children: <Widget>[
-                        ElevatedButton(
-                            onPressed: () {
-                              _fbKey.currentState?.save();
-                              print(_fbKey.currentState!.value['image']);
-                              if (_fbKey.currentState!.validate()) {
-                                EventsMap.createEvent(EventsMap.Event(
-                                    id: 2,
-                                    eventname: _fbKey
-                                        .currentState!.value['event_name'],
-                                    description: _fbKey
-                                        .currentState!.value['description'],
-                                    createDate: 'createDate',
-                                    lat: responseLocation.latitude,
-                                    lng: responseLocation.longitude,
-                                    address: address));
-                                Navigator.pop(context, 'Test');
-                              }
-                            },
-                            child: Text('Submit')),
+                        Padding(
+                          padding: EdgeInsets.all(16.0),
+                          child: ElevatedButton(
+                              style: ButtonStyle(padding: MaterialStateProperty.all(const EdgeInsets.all(20)), ),
+                              onPressed: () async {
+                                _fbKey.currentState?.save();
+                                if (_fbKey.currentState!.validate()) {
+                                  EventsMap.Event newEvent = await EventsMap.createEvent(EventsMap.Event(
+                                      id: 2,
+                                      eventname: _fbKey
+                                          .currentState!.value['event_name'],
+                                      description: _fbKey
+                                          .currentState!.value['description'],
+                                      createDate: 'createDate',
+                                      lat: responseLocation.latitude,
+                                      lng: responseLocation.longitude,
+                                      address: address,
+                                      owner: widget.user.id.toString(),
+                                    startDate: _fbKey
+                                        .currentState!.value['date_from'].toString(),
+                                    endDate: _fbKey
+                                        .currentState!.value['date_to'].toString()
+                                  ));
+                                  EventsMap.joinEvent(newEvent.id.toString(), widget.user.id);
+                                  Navigator.pop(context, 'Test');
+                                }
+                              },
+                              child: Text('Submit')),
+                        ),
+
                       ],
                     )
                   ],

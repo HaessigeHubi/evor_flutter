@@ -3,12 +3,12 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import '../../login/signup.dart';
 import '../../../domain/repository/models/events.dart' as EventsMap;
+import '../../../domain/repository/models/users.dart' as EventUser;
 import 'detailevent.dart';
 
-
 class EventList extends StatefulWidget {
-  const EventList({super.key});
-
+  const EventList({super.key, required this.user});
+  final EventUser.User user;
   @override
   State<EventList> createState() => _EventListState();
 }
@@ -18,6 +18,7 @@ class _EventListState extends State<EventList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.orange,
         title: Text("All Events close to you"),
         actions: <Widget>[
           IconButton(
@@ -31,20 +32,20 @@ class _EventListState extends State<EventList> {
                 Navigator.pushAndRemoveUntil(
                     context,
                     MaterialPageRoute(builder: (context) => SignUp()),
-                        (Route<dynamic> route) => false);
+                    (Route<dynamic> route) => false);
               });
             },
           ),
         ],
       ),
-      body: const EventListItems(),
+      body: EventListItems( user: widget.user,),
     );
   }
 }
 
-
 class EventListItems extends StatefulWidget {
-  const EventListItems({super.key});
+  final EventUser.User user;
+  const EventListItems({super.key, required this.user});
 
   @override
   State<EventListItems> createState() => _EventListItemsState();
@@ -62,27 +63,30 @@ class _EventListItemsState extends State<EventListItems> {
               itemBuilder: (BuildContext context, int index) {
                 return Card(
                     child: ListTile(
-                      leading: CircleAvatar(
-                          radius: 28,
-                          backgroundImage: NetworkImage(
-                              'https://media.gettyimages.com/photos/spectators-cheering-at-sporting-event-picture-id487704373')),
-                      trailing: const Icon(Icons.add),
-                      subtitle: Container(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Text(snapshot.data![index].description),
-                              Text(snapshot.data![index].createDate),
-                              Text(snapshot.data![index].address),
-                            ],
-                          )
-                      ),
-                      title: Text(snapshot.data![index].eventname),
-                      onTap:(){
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => DetailEvent(event: snapshot.data![index],)));
-                      },
-                    ));
+                  leading: CircleAvatar(
+                      radius: 28,
+                      backgroundImage: NetworkImage(
+                          'https://media.gettyimages.com/photos/spectators-cheering-at-sporting-event-picture-id487704373')),
+                  trailing: const Icon(Icons.add),
+                  subtitle: Container(
+                      child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text(snapshot.data![index].description),
+                      Text(snapshot.data![index].startDate + ' - ' + snapshot.data![index].endDate),
+                      Text(snapshot.data![index].address),
+                    ],
+                  )),
+                  title: Text(snapshot.data![index].eventname),
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => DetailEvent(
+                              event: snapshot.data![index],
+                          user: widget.user,
+                            )));
+                  },
+                ));
               });
         } else if (snapshot.hasError) {
           return Text(snapshot.error.toString());
@@ -93,5 +97,3 @@ class _EventListItemsState extends State<EventListItems> {
     );
   }
 }
-
-

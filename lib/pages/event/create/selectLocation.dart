@@ -18,7 +18,7 @@ class _SelectLocationState extends State<SelectLocation> {
     return  Scaffold(
         appBar: AppBar(
           title: Text("Select your Event Location"),
-          backgroundColor: Colors.deepPurpleAccent,
+          backgroundColor: Colors.orange,
         ),
         body: Stack(
             children:[

@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:ui' as ui;
 
 import 'package:image/image.dart' as img;
@@ -6,9 +5,9 @@ import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import '../event/search/detailevent.dart';
-import '../login/signup.dart';
 import 'package:flutter/material.dart';
 import '../../domain/repository/models/events.dart' as EventsMap;
+import '../../domain/repository/models/users.dart' as EventUser;
 import '../../domain/location/userLocation.dart' as UserLocation;
 
 import 'dart:typed_data';
@@ -17,8 +16,8 @@ bool updateMap = true;
 Filter mapfilter = new Filter.e();
 
 class GoogleMapsWidget extends StatefulWidget {
-  const GoogleMapsWidget({super.key});
-
+  const GoogleMapsWidget({super.key, required this.user});
+final EventUser.User user;
   @override
   State<GoogleMapsWidget> createState() => _GoogleMapsWidgetState();
 }
@@ -54,7 +53,7 @@ class _GoogleMapsWidgetState extends State<GoogleMapsWidget> {
                   snippet: event.address,
                   onTap: () {
                     Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => DetailEvent(event: event)));
+                        builder: (context) => DetailEvent(event: event, user: widget.user)));
                   }),
               icon: BitmapDescriptor.fromBytes(markerIcon),
             );
@@ -126,8 +125,8 @@ Future<Uint8List> getRoundedImage(String imagePath) async {
   img.drawCircle(circleImage, x: image.width ~/ 2, y: image.height ~/ 2,
       radius: image.width ~/ 2, color: img.ColorRgba8(255, 255, 255, 255));
 
-  final img.Image maskedImage = img.copyMask(image, circleImage);
-  final Uint8List roundedImage = img.encodePng(maskedImage);
+ // final img.Image maskedImage = img.copyMask(image, circleImage);
+ // final Uint8List roundedImage = img.encodePng(maskedImage);
 
-  return roundedImage;
+  return bytes;
 }
