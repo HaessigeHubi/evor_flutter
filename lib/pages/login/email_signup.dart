@@ -170,10 +170,13 @@ class _EmailSignUpState extends State<EmailSignUp> {
       isLoading = false;
       userFound = true;
     } else {
+      print("TEst1");
       firebaseAuth
           .createUserWithEmailAndPassword(
               email: emailController.text, password: passwordController.text)
           .then((result) async {
+
+        print("TEst2");
         User.User loginUser =User.User(
             id: 1,
             firstname: firstnameController.text,

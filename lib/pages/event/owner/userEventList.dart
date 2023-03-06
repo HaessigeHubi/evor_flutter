@@ -19,6 +19,7 @@ class _UserEventListState extends State<UserEventList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.orange,
         title: Text("Your upcoming Events"),
         actions: <Widget>[
           IconButton(

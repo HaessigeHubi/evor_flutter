@@ -11,13 +11,11 @@ import '../../../domain/repository/models/events.dart' as EventsMap;
 import '../../../domain/repository/models/users.dart' as EventUser;
 import 'selectLocation.dart';
 
-
 import 'package:image_picker/image_picker.dart';
 
 class CreateEvent extends StatefulWidget {
   CreateEvent({super.key, required this.user});
   final EventUser.User user;
-
 
   @override
   State<CreateEvent> createState() => _CreateEventState();
@@ -27,7 +25,8 @@ class _CreateEventState extends State<CreateEvent> {
   final GlobalKey<FormBuilderState> _fbKey = GlobalKey<FormBuilderState>();
   late List<dynamic> imageList;
   XFile? imageFile;
-  ResponseLocation responseLocation = new ResponseLocation(1, 1, new Placemark(street: 'No Location selected'));
+  ResponseLocation responseLocation =
+      new ResponseLocation(1, 1, new Placemark(street: 'No Location selected'));
   String address = '';
 
   @override
@@ -57,7 +56,6 @@ class _CreateEventState extends State<CreateEvent> {
       body: Container(
         child: SingleChildScrollView(
           child: Column(
-
             children: <Widget>[
               FormBuilder(
                 key: _fbKey,
@@ -105,7 +103,6 @@ class _CreateEventState extends State<CreateEvent> {
                       name: "date_from",
                       inputType: InputType.both,
                       format: DateFormat('dd.MM.yyy HH:mm'),
-
                       decoration: InputDecoration(labelText: "Date from"),
                       onChanged: (value) {
                         print(value);
@@ -163,73 +160,119 @@ class _CreateEventState extends State<CreateEvent> {
                     ),
                     SizedBox(height: 20),
                     ElevatedButton(
-                        style: ButtonStyle( backgroundColor: MaterialStateProperty.all<Color>(Colors.orange)),
+                        style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all<Color>(
+                                Colors.orange)),
                         onPressed: () async {
                           final result = await Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => SelectLocation()),
+                            MaterialPageRoute(
+                                builder: (context) => SelectLocation()),
                           );
                           print(result);
                           setState(() {
                             responseLocation = result as ResponseLocation;
-                            String street = responseLocation.selectedLocation.street!;
-                            String postalCode = responseLocation.selectedLocation.postalCode!;
-                            String administrativeArea = responseLocation.selectedLocation.administrativeArea!;
-                            String country = responseLocation.selectedLocation.country!;
-                            address = '$street \n$postalCode $administrativeArea\n$country';
+                            String street =
+                                responseLocation.selectedLocation.street!;
+                            String postalCode =
+                                responseLocation.selectedLocation.postalCode!;
+                            String administrativeArea = responseLocation
+                                .selectedLocation.administrativeArea!;
+                            String country =
+                                responseLocation.selectedLocation.country!;
+                            address =
+                                '$street \n$postalCode $administrativeArea\n$country';
                           });
-                        }, child:
-                    Text('Select Event Location')),
-                    if(responseLocation.selectedLocation.street != 'No Location selected') Text(address,style: TextStyle(fontSize:19,fontWeight: FontWeight.bold),),
-
+                        },
+                        child: Text('Select Event Location')),
+                    if (responseLocation.selectedLocation.street !=
+                        'No Location selected')
+                      Text(
+                        address,
+                        style: TextStyle(
+                            fontSize: 19, fontWeight: FontWeight.bold),
+                      ),
                     SizedBox(height: 10),
-                    TextField(
+                    FormBuilderTextField(
                       decoration: InputDecoration(
-                          labelText: "Partition Age (optional)"),
+                          labelText: "Participation Age (optional)"),
                       keyboardType: TextInputType.number,
+                      name: 'ageRestriction',
                     ),
-                    TextField(
+                    FormBuilderTextField(
                       decoration: InputDecoration(
                           labelText: "Maxiumum Partitions (optional)"),
                       keyboardType: TextInputType.number,
+                      name: 'maxParticipation',
                     ),
-
-
                     SizedBox(height: 40),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
-
                       children: <Widget>[
                         Padding(
                           padding: EdgeInsets.all(16.0),
                           child: ElevatedButton(
-                              style: ButtonStyle(padding: MaterialStateProperty.all(const EdgeInsets.all(20)), ),
+                              style: ButtonStyle(
+                                padding: MaterialStateProperty.all(
+                                    const EdgeInsets.all(20)),
+                              ),
                               onPressed: () async {
                                 _fbKey.currentState?.save();
                                 if (_fbKey.currentState!.validate()) {
-                                  EventsMap.Event newEvent = await EventsMap.createEvent(EventsMap.Event(
-                                      id: 2,
-                                      eventname: _fbKey
-                                          .currentState!.value['event_name'],
-                                      description: _fbKey
-                                          .currentState!.value['description'],
-                                      createDate: 'createDate',
-                                      lat: responseLocation.latitude,
-                                      lng: responseLocation.longitude,
-                                      address: address,
-                                      owner: widget.user.id.toString(),
-                                    startDate: _fbKey
-                                        .currentState!.value['date_from'].toString(),
-                                    endDate: _fbKey
-                                        .currentState!.value['date_to'].toString()
+                                  print(_fbKey.currentState!.value['Tags']
+                                      .toString());
+                                  int ageRestriction = 0;
+                                  int maxParticipation = 0;
+                                  String dateFrom = _fbKey
+                                      .currentState!.value['date_from']
+                                      .toString();
+                                  String dateTo = _fbKey
+                                      .currentState!.value['date_to']
+                                      .toString();
+                                  if (_fbKey.currentState!
+                                          .value['maxParticipation'] !=
+                                      null) {
+                                    maxParticipation = int.parse(_fbKey
+                                        .currentState!
+                                        .value['maxParticipation']);
+                                    print(maxParticipation);
+                                  }
+                                  if (_fbKey.currentState!
+                                      .value['ageRestriction'] !=
+                                      null) {
+
+                                    ageRestriction = int.parse(_fbKey
+                                        .currentState!
+                                        .value['ageRestriction']);
+                                    print(ageRestriction);
+                                  }
+                                  EventsMap.Event newEvent =
+                                      await EventsMap.createEvent(
+                                          EventsMap.Event(
+                                    id: 2,
+                                    eventname: _fbKey
+                                        .currentState!.value['event_name'],
+                                    description: _fbKey
+                                        .currentState!.value['description'],
+                                    createDate: 'createDate',
+                                    lat: responseLocation.latitude,
+                                    lng: responseLocation.longitude,
+                                    address: address,
+                                    owner: widget.user.id.toString(),
+                                    startDate: dateFrom.substring(0, dateFrom.length - 7),
+                                    endDate: dateTo.substring(0, dateTo.length - 7),
+                                    tag: _fbKey.currentState!.value['Tags']
+                                        .toString(),
+                                    maxParticipation: maxParticipation,
+                                    ageRestriction: ageRestriction,
                                   ));
-                                  EventsMap.joinEvent(newEvent.id.toString(), widget.user.id);
+                                  EventsMap.joinEvent(
+                                      newEvent.id.toString(), widget.user.id);
                                   Navigator.pop(context, 'Test');
                                 }
                               },
                               child: Text('Submit')),
                         ),
-
                       ],
                     )
                   ],

@@ -24,7 +24,7 @@ Future<Event> fetchEventbyMail(String email) async {
     if (response.body != ''){
       return parseEvent(response.body);
     }
-    return Event(id: 1, eventname: '', description: '', createDate: '', lat: 0, lng: 0, address: '', owner: '',startDate: '',endDate: '');
+    return Event(id: 1, eventname: '', description: '', createDate: '', lat: 0, lng: 0, address: '', owner: '',startDate: '',endDate: '', tag: '',maxParticipation: 0, ageRestriction: 0);
   } else {
     print(response.body);
     throw Exception('failed');

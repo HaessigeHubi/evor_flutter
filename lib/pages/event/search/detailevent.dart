@@ -16,10 +16,13 @@ class DetailEvent extends StatelessWidget{
   @override
   Widget build (BuildContext context) => Scaffold(
     appBar: AppBar(
+      backgroundColor: Colors.orange,
       title: Text(event.eventname),
     ),
     body: Center(
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Image.network(
               'https://media.gettyimages.com/photos/spectators-cheering-at-sporting-event-picture-id487704373'
@@ -32,14 +35,139 @@ class DetailEvent extends StatelessWidget{
                 fontWeight: FontWeight.bold,
               )
           ),
-          ElevatedButton(onPressed: (){
-            Navigator.pop(context);
-          }, child: Text('Go Back'),),
-          ElevatedButton(onPressed: (){
-            print(event.id);
-            EventsMap.joinEvent(event.id.toString(), user.id);
-            Navigator.pop(context);
-          }, child: Text('Join Event'),)
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Text(
+                  "Description: ",
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  )
+              ),
+              Expanded(
+                flex: 1,
+                child: Text(
+                  event.description,
+                  style: const TextStyle(
+                    fontSize: 16,
+                  )
+              ),)
+
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Text(
+                  "Date: ",
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  )
+              ),
+              Text(
+                  event.startDate + ' - ' + event.endDate,
+                  style: const TextStyle(
+                    fontSize: 16,
+                  )
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Text(
+                  "Adress: ",
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  )
+              ),
+              Text(
+                event.address,
+                  style: const TextStyle(
+                    fontSize: 16,
+                  )
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Text(
+                  "Tag: ",
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  )
+              ),
+              Text(
+                  event.tag,
+                  style: const TextStyle(
+                    fontSize: 16,
+                  )
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Text(
+                  "Max Participations: ",
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  )
+              ),
+              Text(
+                  event.maxParticipation.toString(),
+                  style: const TextStyle(
+                    fontSize: 16,
+                  )
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Text(
+                  "Age Restriction: ",
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  )
+              ),
+              Text(
+                  event.ageRestriction.toString(),
+                  style: const TextStyle(
+                    fontSize: 16,
+                  )
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Padding(padding: EdgeInsets.all(16.0),
+              child:
+              ElevatedButton(onPressed: (){
+                Navigator.pop(context);
+              }, child: Text('Go Back'),),),
+
+              ElevatedButton(onPressed: (){
+                print(event.id);
+                EventsMap.joinEvent(event.id.toString(), user.id);
+                Navigator.pop(context);
+              }, child: Text('Join Event'),)
+            ],
+          ),
+
         ],
       ),
 

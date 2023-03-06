@@ -6,13 +6,14 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:fancy_bottom_navigation/fancy_bottom_navigation.dart';
-import 'package:evor/evor.dart';
-import 'package:evor/pages/login/signup.dart';
-import 'package:evor/pages/event/search/eventlist.dart';
-import 'package:evor/pages/event/create/createEvent.dart';
-import 'package:evor/pages/event/owner/userEventList.dart';
-import 'package:evor/pages/Maps/googlemaps.dart';
-import 'package:evor/domain/repository/models/users.dart' as User;
+import '../lib/home.dart';
+import '../lib/home.dart';
+import '../lib/pages/login/signup.dart';
+import '../lib/pages/event/search/eventlist.dart';
+import '../lib/pages/event/create/createEvent.dart';
+import '../lib/pages/event/owner/userEventList.dart';
+import '../lib/pages/Maps/googlemaps.dart';
+import '../lib/domain/repository/models/users.dart' as User;
 
 class MockNavigatorObserver extends Mock implements NavigatorObserver {}
 
@@ -24,13 +25,11 @@ class MockBuildContext extends Mock implements BuildContext {}
 
 class MockFirebaseAuth extends Mock implements FirebaseAuth {}
 
-class MockNavigatorState extends Mock implements NavigatorState {}
 
 class MockPageRoute extends Mock implements PageRoute {}
 
 class MockFirebaseDatabase extends Mock implements FirebaseDatabase {}
 
-class MockFormBuilderState extends Mock implements FormBuilderState {}
 
 void main() {
   late MockFirebaseAuth mockFirebaseAuth;

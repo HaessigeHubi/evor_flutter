@@ -16,6 +16,9 @@ class Event {
   final String owner;
   final String startDate;
   final String endDate;
+  final String tag;
+  final int maxParticipation;
+  final int ageRestriction;
 
   const Event({
     required this.id,
@@ -27,7 +30,10 @@ class Event {
     required this.address,
     required this.owner,
     required this.startDate,
-    required this.endDate
+    required this.endDate,
+    required this.tag,
+    required this.maxParticipation,
+    required this.ageRestriction
   });
 
   factory Event.fromJson(Map<String, dynamic> json) {
@@ -41,7 +47,10 @@ class Event {
         address: json['address'],
         owner: json['owner'],
         startDate: json['startDate'],
-        endDate: json['endDate']
+        endDate: json['endDate'],
+        tag: json['tag'],
+        maxParticipation: json['maxParticipation'],
+        ageRestriction: json['ageRestriction']
     );
   }
 }
@@ -72,7 +81,7 @@ Future<Event> fetchEventbyMail(String email) async {
     if (response.body != ''){
       return parseEvent(response.body);
     }
-    return Event(id: 1, eventname: '', description: '', createDate: '', lat: 0, lng: 0, address: '', owner: '',startDate: '',endDate: '');
+    return Event(id: 1, eventname: '', description: '', createDate: '', lat: 0, lng: 0, address: '', owner: '',startDate: '',endDate: '', tag: '',maxParticipation: 0, ageRestriction: 0);
   } else {
     print(response.body);
     throw Exception('failed');
@@ -93,7 +102,10 @@ Future<Event> createEvent(Event event) async {
         'address': event.address,
         'owner' : event.owner,
         'startDate': event.startDate,
-        'endDate':event.endDate
+        'endDate':event.endDate,
+        'tag':event.tag,
+        'maxParticipation':event.maxParticipation.toString(),
+        'ageRestriction':event.ageRestriction.toString()
       })
   );
   return parseEvent(response.body);
