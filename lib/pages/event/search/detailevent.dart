@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import '../../../domain/repository/models/events.dart' as EventsMap;
 import '../../../domain/repository/models/users.dart' as EventUser;
 
+//Details are beeing send by Parameters. The User and Event is then displayed
 class DetailEvent extends StatelessWidget{
   final EventsMap.Event event;
   final EventUser.User user;
@@ -24,6 +25,7 @@ class DetailEvent extends StatelessWidget{
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
+          //Default Image
           Image.network(
               'https://media.gettyimages.com/photos/spectators-cheering-at-sporting-event-picture-id487704373'
           ),

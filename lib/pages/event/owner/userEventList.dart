@@ -63,7 +63,7 @@ class _UserEventListItemsState extends State<UserEventListItems> {
           return ListView.builder(
               itemCount: snapshot.data!.length,
               itemBuilder: (BuildContext context, int index) {
-
+                // If the User is the Owner this Card is Displayed
                 if(snapshot.data![index].owner.toString() == widget.user.id.toString()){
                   return Card(
                       child: ListTile(
@@ -89,6 +89,7 @@ class _UserEventListItemsState extends State<UserEventListItems> {
                         },
                       ));
                 } else{
+                  //If User is not the Owner this Card is displayed
                   return Card(
                       child: ListTile(
                         leading: CircleAvatar(

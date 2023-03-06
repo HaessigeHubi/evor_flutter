@@ -98,7 +98,7 @@ class _EmailLogInState extends State<EmailLogIn> {
         email: emailController.text, password: passwordController.text)
         .then((result) async {
       isLoading = false;
-      print(result);
+      //Gets User Object from the Backend
       UserEvent.User loginUser = await UserEvent.fetchUserbyMail(emailController.text);
       Navigator.pushReplacement(
         context,

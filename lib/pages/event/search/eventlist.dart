@@ -55,6 +55,7 @@ class _EventListItemsState extends State<EventListItems> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<List<EventsMap.Event>>(
+      //Gets Events from the DB
       future: EventsMap.fetchEvents(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
@@ -65,6 +66,7 @@ class _EventListItemsState extends State<EventListItems> {
                     child: ListTile(
                   leading: CircleAvatar(
                       radius: 28,
+                      //Default Image
                       backgroundImage: NetworkImage(
                           'https://media.gettyimages.com/photos/spectators-cheering-at-sporting-event-picture-id487704373')),
                   trailing: const Icon(Icons.add),

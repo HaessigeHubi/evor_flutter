@@ -118,7 +118,7 @@ class _HomeState extends State<Home> {
             TabData(iconData: Icons.list, title: "List"),
             TabData(iconData: Icons.map, title: "Map"),
             TabData(iconData: Icons.calendar_month, title: "Owner"),
-            TabData(iconData: Icons.filter_alt, title: "Filter")
+            TabData(iconData: Icons.filter_alt, title: "Filter"),
           ],
           onTabChangedListener: (position) {
             setState(() {
@@ -137,9 +137,7 @@ Route _createRoute() {
       const begin = Offset(0.5, -1.0);
       const end = Offset(0.0, 0.0);
       const curve = Curves.fastOutSlowIn;
-
       var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
-
       return SlideTransition(
         position: animation.drive(tween),
         child: child,

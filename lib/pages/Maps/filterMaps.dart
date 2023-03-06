@@ -3,7 +3,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'googlemaps.dart';
 
 
-//Filter App
+//Filter App and returns Filter Object at the end. Similar to Create Event
 class Filter_Event extends StatelessWidget {
   final GlobalKey<FormBuilderState> _fbFilterKey =
   GlobalKey<FormBuilderState>();

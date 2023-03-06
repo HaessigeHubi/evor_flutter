@@ -4,6 +4,7 @@ import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'email_login.dart';
 import 'email_signup.dart';
 
+//Landing Page for Users
 class SignUp extends StatelessWidget {
   final String title = "Sign Up";
 

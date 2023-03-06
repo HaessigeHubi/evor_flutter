@@ -21,15 +21,16 @@ final EventUser.User user;
   @override
   State<GoogleMapsWidget> createState() => _GoogleMapsWidgetState();
 }
-
+//Google Maps Plugin
 class _GoogleMapsWidgetState extends State<GoogleMapsWidget> {
+  //Default Location
   double latitude = 42.376888;
   double longitude = 8.541694;
   late GoogleMapController mapController;
   LatLng _center = LatLng(47.376888, 8.541694);
 
   final Map<String, Marker> _markers = {};
-
+//Function for the first load
   Future<void> onMapCreated(GoogleMapController controller) async {
     if (updateMap) {
       mapController = controller;
@@ -38,11 +39,12 @@ class _GoogleMapsWidgetState extends State<GoogleMapsWidget> {
       mapController.setMapStyle(stylingMap);
       final events = await EventsMap.fetchEvents();
       _markers.clear();
-
+      //Position Marker für Events
       final Uint8List markerIcon = await getBytesFromAsset('assets/position.png', 80);
 
       setState(() {
         final Map<String, Marker> _tmpmarkers = {};
+        //Adds Markers to the map
         for (final event in events) {
           if (event.eventname.contains(mapfilter.eventname)) {
             final marker = Marker(
@@ -72,6 +74,7 @@ class _GoogleMapsWidgetState extends State<GoogleMapsWidget> {
 
   @override
   Widget build(BuildContext context) {
+    //Google Map in Widget
     return GoogleMap(
       onMapCreated: onMapCreated,
       onCameraIdle: () {
@@ -88,7 +91,7 @@ class _GoogleMapsWidgetState extends State<GoogleMapsWidget> {
     );
   }
 }
-
+//Filter Model for Marker Filtering
 class Filter {
   String eventname = '';
   String datefrom = '';
@@ -104,7 +107,7 @@ class Filter {
   }
   Filter.e() {}
 }
-
+//Loads Image to Marker in correct format
 Future<Uint8List> getBytesFromAsset(String path, int width) async {
   ByteData data = await rootBundle.load(path);
   ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List(),
@@ -113,20 +116,4 @@ Future<Uint8List> getBytesFromAsset(String path, int width) async {
   return (await fi.image.toByteData(format: ui.ImageByteFormat.png))!
       .buffer
       .asUint8List();
-}
-
-Future<Uint8List> getRoundedImage(String imagePath) async {
-  final ByteData imageData = await rootBundle.load(imagePath);
-  final Uint8List bytes = Uint8List.view(imageData.buffer);
-
-  final img.Image? image = img.decodeImage(bytes);
-  final img.Image circleImage = img.Image(width: image!.width, height: image.height);
-  img.fill(circleImage, color: img.ColorRgba8(255, 255, 255, 0));
-  img.drawCircle(circleImage, x: image.width ~/ 2, y: image.height ~/ 2,
-      radius: image.width ~/ 2, color: img.ColorRgba8(255, 255, 255, 255));
-
- // final img.Image maskedImage = img.copyMask(image, circleImage);
- // final Uint8List roundedImage = img.encodePng(maskedImage);
-
-  return bytes;
 }
